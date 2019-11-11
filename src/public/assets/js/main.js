@@ -5,6 +5,8 @@ let user = {
     user_name: null
 };
 
+let connected = false;
+
 $(function() {
     $("form#formLogin").submit(e => {
         formHandleConnect(e);
@@ -14,8 +16,15 @@ $(function() {
         formHandleSubmit(e);
     });
 
-    localStorage.getItem("user_name") &&
+    if(localStorage.getItem("user_name"))
+    {
         formHandleConnect(null, localStorage.getItem("user_name"));
+    }
+    else
+    {
+        $(".loading").attr("hidden", true);
+        $(".login").removeAttr("hidden");
+    }
 });
 
 function formHandleSubmit(e) {
@@ -44,7 +53,20 @@ function sendMessage(e) {
     return false;
 }
 
-let connected = false;
+function clearChat()
+{
+    $("#mensagens").html('');
+}
+
+function logout() {
+
+    localStorage.removeItem('user_name');
+
+    socket && socket.disconnect();
+
+    location.reload();
+
+}
 
 function formHandleConnect(e, userName = null) {
 
@@ -82,6 +104,7 @@ function formHandleConnect(e, userName = null) {
         $("#mensagens").append(msg);
 
         $(".login").attr("hidden", true);
+        $(".loading").attr("hidden", true);
         $(".chat").removeAttr("hidden");
 
         socket.emit('user_list', { ownerId: socket.id }, function (responseData) {
@@ -159,14 +182,4 @@ function formHandleConnect(e, userName = null) {
 
         $("#mensagens").append(msg);
     });
-}
-
-function logout() {
-
-    localStorage.removeItem('user_name');
-
-    socket && socket.disconnect();
-
-    location.reload();
-
 }

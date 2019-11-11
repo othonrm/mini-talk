@@ -11,7 +11,7 @@
         
         <div class="App">
 
-            <div class="login">
+            <div class="login" hidden>
 
                 <form id="formLogin">
 
@@ -29,6 +29,12 @@
 
             </div>
 
+            <div class="loading" >
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+
             <div class="chat" hidden>
                 
                 <div class="d-flex flex-column justify-content-between">
@@ -37,8 +43,10 @@
                     </ul>
                     <button class="btn btn-link small" onclick="logout();">Sair</button>
                 </div>
-    
+                
                 <div class="chatContent">
+                    <button class="btn btn-link ml-auto" onclick="clearChat();">Clear</button>
+                    
                     <ul id="mensagens"></ul>
     
                     <form id="formMensagem">
