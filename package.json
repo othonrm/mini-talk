@@ -1,0 +1,21 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "author": "Jose Othon",
+  "licenses": [
+    "MIT"
+  ],
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "livereload": "^0.8.2",
+    "nodemon": "^1.19.4",
+    "socketio": "^1.0.0"
+  }
+}

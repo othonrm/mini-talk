@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat Example</title>
+
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        
+        <div class="App">
+
+            <div class="login">
+
+                <form id="formLogin">
+
+                    <h5>Chat example</h5>
+
+                    <label>
+                        Nome:
+                        <input type="text" name="username">
+                    </label>
+
+                    <button>Entrar</button>
+
+                </form>
+
+
+            </div>
+
+            <div class="chat" hidden>
+                <ul id="users">
+                    <li>
+                        User 1
+                    </li>
+                    <li>
+                        User 2
+                    </li>
+                    <li>
+                        User 3
+                    </li>
+                </ul>
+    
+                <div class="chatContent">
+                    <ul id="mensagens"></ul>
+    
+                    <form id="formMensagem">
+                        <input id="message" autocomplete="off" placeholder="Escreva sua mensagem..." />
+                        <button class="sendButton">Enviar</button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+
+    </body>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <script>
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+        ':35729/livereload.js?snipver=1"></' + 'script>')
+        </script>
+
+    <script>
+
+        var socket = null;
+
+        let user = {
+            user_id: null,
+            user_name: null
+        };
+
+        $(function () {
+
+            $('form#formLogin').submit((e) => {
+                formHandleConnect(e)
+            });
+
+            $('form#formMensagem').submit((e) => {
+                formHandleSubmit(e)
+            });
+
+            console.log(localStorage.getItem('user_name'));
+
+            localStorage.getItem('user_name') && formHandleConnect(null, localStorage.getItem('user_name'));
+            
+        });
+
+        function formHandleSubmit(e) {
+
+            e.preventDefault(); // prevents page reloading
+
+            sendMessage(e);
+            
+        }
+
+        function sendMessage(e) {
+
+            if(!connected)
+            {
+                alert("Você precisa se conectar antes de enviar mensagens...");
+
+                return;
+            }
+
+            let message = $('#message').val();
+
+            $('#message').val('');
+
+            if(!content.msg)
+            {
+                return;
+            }
+
+            console.log("sending message: " + message);        
+            
+            socket.emit('send_message', message);
+
+            return false;
+            
+        }
+
+        let connected = false;
+
+        function formHandleConnect(e, userName = null) {
+
+            e && e.preventDefault();
+
+            let user_name = userName || $('[name="username"]').val();
+
+            console.log("connecting as: " + user_name);
+
+            let channelName = 
+            //'';
+            '/brazil';
+
+            socket = io(channelName, {
+                query: { user_name }
+            });
+
+            localStorage.setItem("user_name", user_name);
+            
+            socket.on('connect', function(content) {
+                
+                user.user_id = channelName + "#" + socket.id;
+                user.user_name = user_name;
+                
+                connected = true;
+
+                $('#message').val('');
+
+                let msg = $('<li class="system">');
+
+                $(msg).append('<div "content">').text("Connected!");
+
+                $('#mensagens').append(msg);                
+
+                $(".login").attr("hidden", true);
+                $(".chat").removeAttr("hidden");
+            });
+
+            socket.on('received_message', function(content) {
+
+                if(!content.msg)
+                {
+                    return;
+                }
+
+                console.log(content);
+                
+                let msg = $(`<li class="${content.user_id ? ((content.user_id == user.user_id) ? 'mine' : '') : 'system'}">`);
+
+                $(msg).append(`<div "content">`).text(`${content.user_name ? (content.user_name + ":") : ''} ${content.msg}`);
+
+                $('#mensagens').append(msg);
+                
+            });
+
+            socket.on('disconnect', function() {
+                console.log('Disconnected!', socket);
+            });
+        }
+
+    </script>
+</html>

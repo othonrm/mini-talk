@@ -1,0 +1,166 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: blanchedalmond;
+}
+
+.App {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+    padding: 10px;
+    max-width: 100%;
+}
+
+.App .login {
+    min-width: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 40px;
+}
+
+.App .login form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+.App .login button {
+    margin: 14px 0px;
+}
+
+.App .login h5 {
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+.App .chat {
+    min-width: 45vw;
+    max-width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.App #users {
+    list-style: none;
+    min-width: 200px;
+    padding: 0px;
+    margin: 0px;
+    padding-right: 16px;
+    margin-right: 4;
+}
+
+.App #users li {
+    padding: 4px 10px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #ddd;
+
+}
+
+.App .chatContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.App #mensagens {
+    background-color: #fdfdfd;
+    width: 100%;
+    min-height: 45vh;
+    border: 1px solid #ddd;
+    border-bottom: 0px;
+    border-radius: 10px 10px 0px 0px;
+    margin: 0px;
+}
+
+.App .chatContent form {
+    display: flex;
+    flex: 1;
+    width: 100%;
+}
+
+.App .chatContent #message {
+    flex: 1;
+}
+.App .chatContent button {
+    flex: 0;
+}
+
+#mensagens {
+    list-style-type: none;
+    margin: 0;
+    padding: 14px;
+}
+
+#mensagens li {
+    padding: 8px 10px;
+    background-color: rgba(119, 128, 255, 0.85);
+    border-radius: 16px;
+    color: #fff;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+#mensagens li.system {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+#mensagens li.mine {
+    background-color: rgba(172, 236, 53, 0.85);
+}
+
+/* 
+form {
+    background: #000;
+    padding: 3px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+form input {
+    border: 0;
+    padding: 10px;
+    width: 90%;
+    margin-right: 0.5%;
+}
+
+form button {
+    width: 9%;
+    background: rgb(130, 224, 255);
+    border: none;
+    padding: 10px;
+}
+
+
+
+
+
+#messages li:nth-child(odd) {
+    background: #eee;
+} */
