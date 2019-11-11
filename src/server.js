@@ -1,9 +1,11 @@
 const express = require('express');
 const socketio = require('socket.io');
+const moment = require('moment');
 const cors = require('cors');
 const http = require('http');
 const livereload = require('livereload');
 const dotenv = require('dotenv');
+
 
 dotenv.config();
 
@@ -11,25 +13,67 @@ const app = express();
 const server = http.Server(app);
 const io = socketio(server);
 
+app.use(express.static('node_modules'));
+
+const channelName = '/brazil';
 const connectedUsers = {};
 
-io.of('/brazil').on('connection', socket => {
+let publicUserList = [];
+
+io.of(channelName).on('connection', socket => {
 
     const { user_name } = socket.handshake.query;
 
     connectedUsers[user_name] = socket.id;
 
-    socket.on('send_message', function(msg){
-        console.log(user_name + " says: " + msg);
-        if(msg == "join")
-        {
-            socket.join('game');
-        }
+    publicUserList.push({
+        socket_id: socket.id,
+        name: user_name,
+        stats: "online",
+        last_seen: null
+    });
+    
+    socket.broadcast.emit('received_message', { msg: `${user_name} entrou na sala` });
+
+    io.of(channelName).emit('user_list', { users: publicUserList });
+
+    socket.on('send_message', function(msg) {
         
-        io.of('/brazil').emit('received_message', { user_id: socket.id, user_name, msg });
+        io.of(channelName).emit('received_message', { user_id: socket.id, user_name, msg });
     });
 
-    socket.broadcast.emit('received_message', { msg: `${user_name} entrou na sala` });
+    socket.on('user_list', function (data, callback) {
+
+        if(data && data.ownerId)
+        {
+
+        }
+
+        callback({ users: publicUserList.map(user => { delete(user.id); return user }) });
+    });
+
+});
+
+io.sockets.on('connection', function (socket) {
+
+    socket.on('disconnect', function () {
+
+        // console.log(socket.id);
+
+        let user = publicUserList.find(user => user.socket_id === (channelName + "#" + socket.id));
+
+        if(!user)
+        {
+            return;
+        }
+
+        io.of(channelName).emit('received_message', { msg: `${user.name} saiu da sala` });
+
+        publicUserList = publicUserList.filter(item => item !== user);
+
+        io.of(channelName).emit('user_list', { users: publicUserList });
+
+    });
 
 });
 

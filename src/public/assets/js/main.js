@@ -14,8 +14,6 @@ $(function() {
         formHandleSubmit(e);
     });
 
-    console.log(localStorage.getItem("user_name"));
-
     localStorage.getItem("user_name") &&
         formHandleConnect(null, localStorage.getItem("user_name"));
 });
@@ -37,11 +35,9 @@ function sendMessage(e) {
 
     $("#message").val("");
 
-    if (!content.msg) {
+    if (!message) {
         return;
     }
-
-    console.log("sending message: " + message);
 
     socket.emit("send_message", message);
 
@@ -51,11 +47,13 @@ function sendMessage(e) {
 let connected = false;
 
 function formHandleConnect(e, userName = null) {
+
+    $(".login").attr("hidden", true);
+    $(".loading").removeAttr("hidden");
+    
     e && e.preventDefault();
 
     let user_name = userName || $('[name="username"]').val();
-
-    console.log("connecting as: " + user_name);
 
     let channelName =
         //'';
@@ -85,14 +83,61 @@ function formHandleConnect(e, userName = null) {
 
         $(".login").attr("hidden", true);
         $(".chat").removeAttr("hidden");
+
+        socket.emit('user_list', { ownerId: socket.id }, function (responseData) {
+
+            if(responseData.users && responseData.users.length > 0)
+            {
+                $("#users").html("");
+
+                responseData.users.forEach(item => {
+                    $("#users").append( $('<li>').text(item.name) );
+                })
+            }
+        });
+
+        setInterval(() => {
+
+            if(!connected)
+            {
+                return;
+            }
+            
+            socket.emit('user_list', { ownerId: socket.id }, function (responseData) {
+
+                if(responseData.users && responseData.users.length > 0)
+                {
+                    $("#users").html("");
+
+                    responseData.users.forEach(item => {
+                        $("#users").append( $('<li>').text(item.name) );
+                    })
+                }
+            });
+            
+        }, 5000);
+
+    });
+
+    socket.on('user_list', function (responseData) {
+            
+        if(responseData.users && responseData.users.length > 0)
+        {
+            $("#users").html("");
+
+            responseData.users.forEach(item => {
+                $("#users").append( $('<li>').text(item.name) );
+            })
+        }
+        
     });
 
     socket.on("received_message", function(content) {
+
         if (!content.msg) {
             return;
         }
 
-        console.log(content);
 
         let msg = $(
             `<li class="${
@@ -114,8 +159,14 @@ function formHandleConnect(e, userName = null) {
 
         $("#mensagens").append(msg);
     });
+}
 
-    socket.on("disconnect", function() {
-        console.log("Disconnected!", socket);
-    });
+function logout() {
+
+    localStorage.removeItem('user_name');
+
+    socket && socket.disconnect();
+
+    location.reload();
+
 }
