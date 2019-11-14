@@ -107,17 +107,7 @@ function formHandleConnect(e, userName = null) {
         $(".loading").attr("hidden", true);
         $(".chat").removeAttr("hidden");
 
-        socket.emit('user_list', { ownerId: socket.id }, function (responseData) {
-
-            if(responseData.users && responseData.users.length > 0)
-            {
-                $("#users").html("");
-
-                responseData.users.forEach(item => {
-                    $("#users").append( $('<li>').text(item.name) );
-                })
-            }
-        });
+        socket.emit('user_list', { ownerId: socket.id }, populateUserList);
 
         setInterval(() => {
 
@@ -126,34 +116,15 @@ function formHandleConnect(e, userName = null) {
                 return;
             }
             
-            socket.emit('user_list', { ownerId: socket.id }, function (responseData) {
+            socket.emit('last_seen', { ownerId: socket.id,  });
 
-                if(responseData.users && responseData.users.length > 0)
-                {
-                    $("#users").html("");
-
-                    responseData.users.forEach(item => {
-                        $("#users").append( $('<li>').text(item.name) );
-                    })
-                }
-            });
+            socket.emit('user_list', { ownerId: socket.id }, populateUserList);
             
         }, 5000);
 
     });
 
-    socket.on('user_list', function (responseData) {
-            
-        if(responseData.users && responseData.users.length > 0)
-        {
-            $("#users").html("");
-
-            responseData.users.forEach(item => {
-                $("#users").append( $('<li>').text(item.name) );
-            })
-        }
-        
-    });
+    socket.on('user_list', populateUserList);
 
     socket.on("received_message", function(content) {
 
@@ -182,4 +153,16 @@ function formHandleConnect(e, userName = null) {
 
         $("#mensagens").append(msg);
     });
+}
+
+function populateUserList(responseData) {
+
+    if(responseData.users && responseData.users.length > 0)
+    {
+        $("#users").html("");
+
+        responseData.users.forEach(item => {
+            $("#users").append( $('<li>').text(item.name) );
+        })
+    }
 }

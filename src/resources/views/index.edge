@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ APP_NAME }}</title>
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+    <div class="App">
+
+        <div class="login" hidden>
+
+            <form id="formLogin">
+
+                <h5>{{ APP_NAME }}</h5>
+
+                <label>
+                    Nome:
+                    <input type="text" name="username">
+                </label>
+
+                <button>Entrar</button>
+
+            </form>
+
+
+        </div>
+
+        <div class="loading">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <div class="chat" hidden>
+
+            <div class="d-flex flex-column justify-content-between">
+                <p class="text-center">Usuários</p>
+                <ul id="users" class="mb-auto">
+                </ul>
+                <button class="btn btn-link small" onclick="logout();">Sair</button>
+            </div>
+
+            <div class="chatContent">
+                <button class="btn btn-link ml-auto" onclick="clearChat();">Clear</button>
+
+                <ul id="mensagens"></ul>
+
+                <form id="formMensagem">
+                    <input id="message" autofocus autocomplete="off" placeholder="Escreva sua mensagem..." />
+                    <button class="sendButton">Enviar</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+<script src="/assets/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/js/popper.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/moment/moment.js"></script>
+
+<script>
+    document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+        ':35729/livereload.js?snipver=1"></' + 'script>')
+</script>
+
+<script src="/assets/js/main.js"></script>
+
+</html>

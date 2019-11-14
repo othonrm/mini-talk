@@ -3,8 +3,12 @@ const socketio = require('socket.io');
 const moment = require('moment');
 const cors = require('cors');
 const http = require('http');
+const path = require('path');
 const livereload = require('livereload');
 const dotenv = require('dotenv');
+
+const edge = require('edge.js');
+const { config, engine } = require('express-edge');
 
 
 dotenv.config();
@@ -14,6 +18,12 @@ const server = http.Server(app);
 const io = socketio(server);
 
 app.use(express.static('node_modules'));
+
+edge.global("APP_NAME", process.env.APP_NAME || 'Mini Talk');
+
+app.use(engine);
+
+app.set('views', `${__dirname}/resources/views`);
 
 const channelName = '/brazil';
 const connectedUsers = {};
@@ -85,7 +95,8 @@ app.use((req, res, next) => {
 });
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/pages/index.html');
+
+    res.render('index');
 });
 
 app.use('/assets', express.static(__dirname + '/public/assets'));
